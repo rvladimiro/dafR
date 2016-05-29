@@ -6,6 +6,9 @@
 \usage{
 Clear()
 }
+\description{
+I'm only writing a description to avoid a warning. I'm a nice package creator. Just type Clear() and the console will be cleared!
+}
 \author{
 Ricardo Vladimiro
 }
