@@ -3,6 +3,8 @@
 export(Clear)
 export(CreateProjectStructure)
 export(GetProjectName)
+export(Load)
+export(Save)
 export(Say)
 export(SetProjectName)
 export(Shout)
