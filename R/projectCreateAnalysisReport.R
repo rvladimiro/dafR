@@ -2,5 +2,5 @@
 #' @title CreateAnalysisReport
 #' @description What does this do?
 CreateAnalysisReport <- function() {
-    print(path.package('MiniclipRTools'))
+    print(path.package('dafR'))
 }
