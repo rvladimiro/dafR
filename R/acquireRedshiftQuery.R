@@ -4,24 +4,24 @@
 #' @author Henrique Cabral and Ricardo Vladimiro
 #' @description Describe this thing
 RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
-    
+
     # Error checking and loading -----------------------------------------------
-    
+
     # Get the dbID serverConfiguration
     dbConfig <- GetDBConfig(dbID, yamlConfig)
-    
+
     # Assign default MySQL port if it doesn't exist
     if(is.null(dbConfig$port)) {
         Say('Port not found for dbID', dbID, '. Using default 5439')
         dbConfig$port = 5439
     }
-    
+
     # Get the s3ID configuration
     s3Config <- GetS3Config(s3ID, yamlConfig)
-    s3FilePrefix <- paste0(GetProjectName(), 
+    s3FilePrefix <- paste0(GetProjectName(),
                            "-",
                            format(Sys.time(), "%Y%m%d-%H%M%S"))
-    
+
     #' Get the clean query statement
     #' - The 1st GetQueryStatement will return the intended query
     #' - Next we escape quotes
@@ -39,9 +39,9 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
             "DELIMITER ';' GZIP ALLOWOVERWRITE;"
         )
     )
-    
+
     # Run the query ------------------------------------------------------------
-    
+
     # Create connection to Redshift dbID
     connection <- RPostgreSQL::dbConnect(
         drv = RPostgreSQL::PostgreSQL(),
@@ -51,7 +51,7 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
         user = dbConfig$user,
         password = dbConfig$password
     )
-    
+
     # Get the error code (if any) from the query
     Say("Running query.")
     # Hold on to error code in case this goes boom!
@@ -59,22 +59,22 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
         results <- RPostgreSQL::dbSendQuery(conn = connection,
                                             statement = query)
     )
-    
+
     # Get the query ID
     Say("Getting query ID.")
     queryIDResults <- RPostgreSQL::dbSendQuery(
-        conn = connection, 
+        conn = connection,
         statement = "select pg_last_query_id();"
     )
     queryID <- RPostgreSQL::fetch(
         res = queryIDResults
     )
-    
+
     # Get file list
     Say("Getting S3 file list.")
     s3FileList <- RPostgreSQL::fetch(
         res = RPostgreSQL::dbSendQuery(
-            conn = connection, 
+            conn = connection,
             statement = paste(
                 "SELECT path FROM stl_unload_log",
                 "WHERE query =", queryID,
@@ -82,20 +82,20 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
             )
         )
     )
-    
+
     # Clean up database connections
     RPostgreSQL::dbClearResult(results)
     RPostgreSQL::dbClearResult(queryIDResults)
     RPostgreSQL::dbDisconnect(connection)
-    
+
     # Get files from S3 --------------------------------------------------------
-    
+
     # Remove extra spaces
     s3FileList <- gsub(pattern = " ", replacement = "", x = s3FileList$path)
-    
+
     # Copy and delete files from S3
     Say("Copying files from S3:")
-    nOfFiles <- length(s3FileList) 
+    nOfFiles <- length(s3FileList)
     for(n in 1:nOfFiles) {
         Windmill("Copying file", n, "of", nOfFiles)
         rmtFile <- s3FileList[n] # Remote file
@@ -113,9 +113,9 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
             ignore.stderr = F
         )
     }
-    
+
     # Unzip files, create data.table and return it -----------------------------
-    
+
     # Unzip files
     Say("Unzipping files:")
     fileList <- list.files(path = "data", pattern = s3FilePrefix)
@@ -125,7 +125,7 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
         # gunzip removes files automatically
         R.utils::gunzip(filename = paste0("data/", fileList[n]), remove = T)
     }
-    
+
     # Create data.table
     Say("Reading local files to data.table:")
     fileList <- list.files(path = "data", pattern = s3FilePrefix)
@@ -138,11 +138,11 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
         Windmill("Reading", n, "of", nOfFiles)
         # Load the partial data table
         dt <- data.table::rbindlist(list(
-            dt, 
-            data.table::fread(paste0("data/", fileList[n]), header = F)
+            dt,
+            data.table::fread(paste0("data/", fileList[n]), header = F, sep = ';')
         ))
     }
-    
+
     # Find and fix int64 columns
     int64Columns <- grep("integer64", sapply(dt, class))
     if(length(int64Columns) > 0) {
@@ -150,10 +150,10 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
             dt[[column]] <- as.integer(dt[[column]])
         }
     }
-    
+
     # Delete the source file
     file.remove(paste0("data/", fileList))
-    
+
     return(dt)
-    
+
 }
