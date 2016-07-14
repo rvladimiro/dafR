@@ -21,6 +21,7 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
     s3FilePrefix <- paste0(GetProjectName(),
                            "-",
                            format(Sys.time(), "%Y%m%d-%H%M%S"))
+    s3FilePrefix <- gsub(" ", "_", s3FilePrefix)
 
     #' Get the clean query statement
     #' - The 1st GetQueryStatement will return the intended query
