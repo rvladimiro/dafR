@@ -108,7 +108,8 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
                 "s3cmd get", rmtFile, lclFile,
                 paste0("--access_key=", s3Config$accessKey),
                 paste0("--secret_key=", s3Config$secretKey),
-                "--delete-after-fetch"
+                "--delete-after-fetch",
+                "--continue"
             ),
             ignore.stdout = T,
             ignore.stderr = F
