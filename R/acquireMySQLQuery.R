@@ -38,14 +38,16 @@ MySQLQuery <- function(query, id, yamlFile = '../db.yml') {
     )
     
     # Get data in chunks of 1000 rows
-    dataframe <- data.frame()
+    dataframe <- data.table()
     results <- suppressWarnings(RMySQL::dbSendQuery(conn = connection, 
                                                     statement = query))
     while(!RMySQL::dbHasCompleted(res = results)) {
-        dataframe <- rbind(
+        dataframe <- data.table::rbindlist(list(
             dataframe,
-            suppressWarnings(RMySQL::fetch(res = results, n = 1000))
-        )
+            as.data.table(
+                suppressWarnings(RMySQL::fetch(res = results, n = 1000))
+            )
+        ))
         Windmill("Fetched", nrow(dataframe), "rows")
     }
     
