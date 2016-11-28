@@ -32,7 +32,7 @@ PerformDailyMonetisationTests <- function(dataset,
     
     
     # Make sure dataset is a data table
-    dataset <- as.data.table(dataset)
+    dataset <- data.table::as.data.table(dataset)
     
     # prepare data to permute based on kpi -------------------------------------
     switch (kpi,

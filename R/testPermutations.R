@@ -26,7 +26,7 @@ PerformPermutationTest <- function(dataset,
     
     
     # Make sure dataset is a data table
-    dataset <- as.data.table(dataset)
+    dataset <- data.table::as.data.table(dataset)
     
     # Make sure it contains a column called response
     if (!(responseColumn %in% names(dataset)))
@@ -39,7 +39,7 @@ PerformPermutationTest <- function(dataset,
     
     
     # initialise results -------------------------------------------------------
-    testResults <- data.table()
+    testResults <- data.table::data.table()
     
     # Get control reference values
     dataset[[groupColumn]] <- as.character(dataset[[groupColumn]])
@@ -56,7 +56,7 @@ PerformPermutationTest <- function(dataset,
         testResponse <- dataset[get(groupColumn) == gr, get(responseColumn)]
         
         # Perform permutation test
-        permTest <- permTS(
+        permTest <- perm::permTS(
             x = testResponse, y = controlResponse,
             alternative = 'two.sided', ...
         )
@@ -64,7 +64,7 @@ PerformPermutationTest <- function(dataset,
         # Add relevant measures to results dataset
         testResults <- rbind(
             testResults,
-            data.table(
+            data.table::data.table(
                 abGroup = gr,
                 meanControl = mean(controlResponse),
                 meanTest = mean(testResponse),

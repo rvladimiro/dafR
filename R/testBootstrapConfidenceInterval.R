@@ -30,7 +30,7 @@ GetBootstrappedCI <- function(dataset,
     
     
     # Make sure dataset is a data table
-    dataset <- as.data.table(dataset)
+    dataset <- data.table::as.data.table(dataset)
     
     # Make sure it contains a column called response
     if (!(responseColumn %in% names(dataset)))
@@ -59,14 +59,14 @@ GetBootstrappedCI <- function(dataset,
         get(groupColumn) == controlGroup, get(responseColumn)
     ]
     
-    controlBootEstimate <- attr(smean.cl.boot(
+    controlBootEstimate <- attr(Hmisc::smean.cl.boot(
         controlResponse, B = bootIterations, reps = TRUE
     ), 'reps')
     
     
     # Initialise results 
-    bootResultsCI <- data.table()
-    bootResultsEstimate <- data.table(
+    bootResultsCI <- data.table::data.table()
+    bootResultsEstimate <- data.table::data.table(
         abGroup = controlGroup,
         estimates = controlBootEstimate
     )
@@ -81,7 +81,7 @@ GetBootstrappedCI <- function(dataset,
         
         # Get test group bootrapped estimate for response variable
         testResponse <- dataset[get(groupColumn) == gr, get(responseColumn)]
-        testBootEstimate <- attr(smean.cl.boot(
+        testBootEstimate <- attr(Hmisc::smean.cl.boot(
             testResponse, B = bootIterations, reps = TRUE
         ), 'reps')
         
@@ -94,7 +94,7 @@ GetBootstrappedCI <- function(dataset,
         # Add measures to results dataset
         bootResultsCI <- rbind(
             bootResultsCI,
-            data.table(
+            data.table::data.table(
                 abGroup = gr,
                 lowCIvalue = lowHighCI[[1]],
                 highCIvalue = lowHighCI[[2]]
@@ -103,7 +103,7 @@ GetBootstrappedCI <- function(dataset,
         
         bootResultsEstimate <- rbind(
             bootResultsEstimate,
-            data.table(
+            data.table::data.table(
                 abGroup = gr,
                 estimates = testBootEstimate
             )

@@ -41,8 +41,8 @@ PerformCohortRetentionTests <- function(dataset,
         stop('Missing required columns')
     
     # Make sure it is a data.table and copy it to avoid side-effects
-    dataset <- as.data.table(dataset)
-    df <- copy(dataset)
+    dataset <- data.table::as.data.table(dataset)
+    df <- data.table::copy(dataset)
     
     
     
@@ -81,7 +81,7 @@ PerformCohortRetentionTests <- function(dataset,
     )
     
     # create data set for results
-    resLog <- data.table()
+    resLog <- data.table::data.table()
     
     
     # Perform for each retention day
@@ -118,7 +118,7 @@ PerformCohortRetentionTests <- function(dataset,
             # register results
             resLog <- rbind(
                 resLog,
-                data.table(
+                data.table::data.table(
                     abGroup = gr,
                     retentionControl = testRes$estimate[[1]],   # retention for control
                     retentionTest = testRes$estimate[[2]],    # retention for test group
