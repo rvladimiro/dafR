@@ -1,5 +1,6 @@
 #' @export
 #' @name PerformDailyMonetisationTests
+#' @import data.table
 #' @title Compares treatment to control on ARPDAU, ARPPU and Conversion Rate
 #' @author João Monteiro
 #' @description Receives a dataset with a response column. It is expected for this dataset to contain one row per DAU, including non-paying users.

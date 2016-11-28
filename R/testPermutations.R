@@ -1,4 +1,5 @@
 #' @export
+#' @import data.table
 #' @name PerformPermutationTest
 #' @title Performs a permutation test
 #' @author João Monteiro

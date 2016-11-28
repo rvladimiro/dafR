@@ -1,5 +1,6 @@
 #' @export
 #' @name PerformCohortRetentionTests
+#' @import data.table
 #' @title Compares treatment to control on retention rate for given retention day
 #' @author João Monteiro
 #' @description This function receives a summarised dataset and compares the retention rates for each avaliable test group against the control.

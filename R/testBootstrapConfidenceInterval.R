@@ -1,5 +1,6 @@
 #' @export
 #' @name GetBootstrappedCI
+#' @import data.table
 #' @title Constructs Confidence Interval for difference in means
 #' @author João Monteiro
 #' @description Receives a dataset with a response column, containing the measure for which the confidence interval will be constructed.
