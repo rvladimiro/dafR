@@ -135,15 +135,30 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
     fileSizes <- file.size(paste0("data/", fileList))
     fileList <- fileList[fileSizes > 0]
     nOfFiles <- length(fileList)
-    dt <- data.table::data.table()
+    
+    # dt <- data.table::data.table()
+    # for(n in 1:nOfFiles) {
+    #     Windmill("Reading", n, "of", nOfFiles)
+    #     # Load the partial data table
+    #     dt <- data.table::rbindlist(list(
+    #         dt,
+    #         data.table::fread(paste0("data/", fileList[n]), header = F, sep = ';')
+    #     ))
+    # }
+    
+    # Trying to use the Hadleyverse file reading solution
+    dataFrameList <- list()
     for(n in 1:nOfFiles) {
         Windmill("Reading", n, "of", nOfFiles)
-        # Load the partial data table
-        dt <- data.table::rbindlist(list(
-            dt,
-            data.table::fread(paste0("data/", fileList[n]), header = F, sep = ';')
-        ))
+        dataFrameList[[n]] <- 
+            suppressMessages(
+                readr::read_csv2(paste0("data/", fileList[n]), 
+                                 col_names = FALSE)
+            )
     }
+    
+    Say("Creating data frame...")
+    dt <- dplyr::bind_rows(dataFrameList)
 
     # Find and fix int64 columns
     int64Columns <- grep("integer64", sapply(dt, class))
