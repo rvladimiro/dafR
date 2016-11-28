@@ -8,7 +8,6 @@ Description: Collection of tools for data analysis. Includes functions to manage
     data analysis projects and tasks.
 License: MIT + file LICENSE
 Imports:
-LazyData: NA
+LazyData: TRUE
 RoxygenNote: 5.0.1
 Suggests:
-    NA
