@@ -136,16 +136,6 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
     fileList <- fileList[fileSizes > 0]
     nOfFiles <- length(fileList)
     
-    # dt <- data.table::data.table()
-    # for(n in 1:nOfFiles) {
-    #     Windmill("Reading", n, "of", nOfFiles)
-    #     # Load the partial data table
-    #     dt <- data.table::rbindlist(list(
-    #         dt,
-    #         data.table::fread(paste0("data/", fileList[n]), header = F, sep = ';')
-    #     ))
-    # }
-    
     # Trying to use the Hadleyverse file reading solution
     dataFrameList <- list()
     for(n in 1:nOfFiles) {
