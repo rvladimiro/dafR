@@ -93,18 +93,18 @@ PerformCohortRetentionTests <- function(dataset,
             
             # count of successes (returned users)
             suc <- c(
-                retentionData[abGroup == controlName & retentionDay == d]$users,
-                retentionData[abGroup == gr & retentionDay == d]$users
+                retentionData[abGroup == gr & retentionDay == d]$users,
+                retentionData[abGroup == controlName & retentionDay == d]$users
             )
             
             # count of trials (new users)
             trials <- c(
                 retentionData[
-                    abGroup == controlName & retentionDay == d
-                    ]$cohortSize,
-                retentionData[
                     abGroup == gr & retentionDay == d
-                    ]$cohortSize
+                ]$cohortSize,
+                retentionData[
+                    abGroup == controlName & retentionDay == d
+                ]$cohortSize
             )
             
             # print status
@@ -121,9 +121,9 @@ PerformCohortRetentionTests <- function(dataset,
                 resLog,
                 data.table::data.table(
                     abGroup = gr,
-                    retentionControl = testRes$estimate[[1]],   # retention for control
-                    retentionTest = testRes$estimate[[2]],    # retention for test group
-                    diffToControl = testRes$estimate[[2]] - testRes$estimate[[1]],
+                    retentionControl = testRes$estimate[[2]],   # retention for control
+                    retentionTest = testRes$estimate[[1]],    # retention for test group
+                    diffToControl = testRes$estimate[[1]] - testRes$estimate[[2]],
                     pValueDiff = testRes$p.value,
                     lowCIvalue = testRes$conf.int[1],
                     highCIvalue = testRes$conf.int[2],
