@@ -1,6 +1,6 @@
 #' @export
 #' @name RedshiftQuery
-#' @title Query data from a Redshift dbID
+#' @title Query data from a Redshift database
 #' @author Henrique Cabral and Ricardo Vladimiro
 #' @description Describe this thing
 RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
