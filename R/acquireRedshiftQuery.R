@@ -2,7 +2,13 @@
 #' @name RedshiftQuery
 #' @title Query data from a Redshift dbID
 #' @author Henrique Cabral and Ricardo Vladimiro
-#' @description Describe this thing
+#' @description This functions runs queries pn Redshift via the UNLOAD command.
+#' The query is unloaded to an s3 bucket and then read locally.
+#' It handles connecting, querying, reading from s3 and disconnecting. The query can either be passed directly as a string or as a path to a file containing a SQL statement.
+#' 
+#' The yaml file must contain host, dbname, s3 bucket name, user and password.
+#' 
+#' This function, as opposed to PostgreSQLQuery, is intended to run large queries that might return a large amount of data or take some time to complete.
 RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
 
     # Error checking and loading -----------------------------------------------
@@ -17,16 +23,31 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
     }
 
     # Get the s3ID configuration
+    # read s3 credentials
     s3Config <- GetS3Config(s3ID, yamlConfig)
+    
+    # set credentials on environment variables for 
+    # compaitibility with aws.s3 package
+    Sys.setenv(
+        "AWS_ACCESS_KEY_ID" = s3Config$accessKey,
+        "AWS_SECRET_ACCESS_KEY" = s3Config$secretKey,
+        "AWS_DEFAULT_REGION" = ifelse(
+            'region' %in% names(s3Config),
+            s3Config$region,
+            'us-west-2'
+        )
+    )
+    
+    # Prefixes for files to be created on the s3 buckets
     s3FilePrefix <- paste0(GetProjectName(),
                            "-",
                            format(Sys.time(), "%Y%m%d-%H%M%S"))
     s3FilePrefix <- gsub(" ", "_", s3FilePrefix)
 
-    #' Get the clean query statement
-    #' - The 1st GetQueryStatement will return the intended query
-    #' - Next we escape quotes
-    #' - The 2nd GetQueryStatement will return the version with the unload code.
+    # Get the clean query statement
+    # - The 1st GetQueryStatement will return the intended query
+    # - Next we escape quotes
+    # - The 2nd GetQueryStatement will return the version with the unload code.
     query <- GetQueryStatement(query)
     query <- gsub(pattern = "\'", replacement = "\'\'", x = query)
     query <- GetQueryStatement(
@@ -37,7 +58,7 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
             "CREDENTIALS '",
             "aws_access_key_id=", s3Config$accessKey, ";",
             "aws_secret_access_key=", s3Config$secretKey, "'",
-            "DELIMITER ';' GZIP ALLOWOVERWRITE;"
+            "DELIMITER ';' ALLOWOVERWRITE;"
         )
     )
 
@@ -94,62 +115,48 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
     # Remove extra spaces
     s3FileList <- gsub(pattern = " ", replacement = "", x = s3FileList$path)
 
-    # Copy and delete files from S3
-    Say("Copying files from S3:")
+    # Read objects from S3
     nOfFiles <- length(s3FileList)
-    for(n in 1:nOfFiles) {
-        Windmill("Copying file", n, "of", nOfFiles)
-        rmtFile <- s3FileList[n] # Remote file
-        lclFile <- paste0("data/s3", s3FilePrefix, "-", n, ".gz")
-        # Get the file from S3 and save it on data folder
-        # After fetch files are deleted
-        system(
-            paste(
-                "s3cmd get", rmtFile, lclFile,
-                paste0("--access_key=", s3Config$accessKey),
-                paste0("--secret_key=", s3Config$secretKey),
-                "--delete-after-fetch",
-                "--continue"
-            ),
-            ignore.stdout = T,
-            ignore.stderr = F
-        )
-    }
-
-    # Unzip files, create data.table and return it -----------------------------
-
-    # Unzip files
-    Say("Unzipping files:")
-    fileList <- list.files(path = "data", pattern = s3FilePrefix)
-    nOfFiles <- length(fileList)
-    for(n in 1:nOfFiles) {
-        Windmill("Unzipping", n, "of", nOfFiles)
-        # gunzip removes files automatically
-        R.utils::gunzip(filename = paste0("data/", fileList[n]), remove = T)
-    }
-
-    # Create data.table
-    Say("Reading local files to data.table:")
-    fileList <- list.files(path = "data", pattern = s3FilePrefix)
-    # Remove 0 length files
-    fileSizes <- file.size(paste0("data/", fileList))
-    fileList <- fileList[fileSizes > 0]
-    nOfFiles <- length(fileList)
     
-    # Trying to use the Hadleyverse file reading solution
-    dataFrameList <- list()
-    for(n in 1:nOfFiles) {
-        Windmill("Reading", n, "of", nOfFiles)
-        dataFrameList[[n]] <- 
-            suppressMessages(
-                readr::read_csv2(paste0("data/", fileList[n]), 
-                                 col_names = FALSE)
+    Say("Copying files from S3:")
+    
+    # Read all objects from s3 by using path on file list
+    s3Objects <- sapply(
+        seq_len(nOfFiles),
+        FUN = function(i) {
+            Windmill("Copying file", i, "of", nOfFiles)
+            aws.s3::get_object(s3FileList[i])
+        }
+    )
+    
+    # Exlude all objects with 0 bites, i.e, length 0
+    s3Objects <- s3Objects[sapply(s3Objects, FUN = function(x) length(x) > 0)]
+    
+    
+    # Read objects as data.frame
+    Say("Reading files as data.table:")
+    
+    nOfObjs <- length(s3Objects)
+    
+    s3DataFrames <- lapply(
+        seq_len(nOfObjs),
+        FUN = function(n) {
+            Windmill("Reading", n, "of", nOfObjs)
+            iotools::read.delim.raw(
+                rawConnection(s3Objects[[n]]),
+                sep = ';', header = FALSE
             )
-    }
+        }
+    )
     
+    # Close all opened connections
+    closeAllConnections()
+    
+    # Create data.table
     Say("Creating data frame...")
-    dt <- dplyr::bind_rows(dataFrameList)
-
+    dt <- data.table::rbindlist(s3DataFrames)
+    
+    
     # Find and fix int64 columns
     int64Columns <- grep("integer64", sapply(dt, class))
     if(length(int64Columns) > 0) {
@@ -158,9 +165,18 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
         }
     }
 
-    # Delete the source file
-    file.remove(paste0("data/", fileList))
-
+    
+    # Finally delete files from s3
+    Say("Removing files from s3")
+    delRes <- sapply(
+        seq_len(nOfFiles),
+        FUN = function(i) {
+            Windmill("Deleting file", i, "of", nOfFiles)
+            aws.s3::delete_object(s3FileList[i])
+        }
+    )
+    
+    
     return(dt)
 
 }
