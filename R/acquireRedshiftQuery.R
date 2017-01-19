@@ -1,6 +1,6 @@
 #' @export
 #' @name RedshiftQuery
-#' @title Query data from a Redshift dbID
+#' @title Query data from a Redshift database
 #' @author Henrique Cabral and Ricardo Vladimiro
 #' @description This functions runs queries pn Redshift via the UNLOAD command.
 #' The query is unloaded to an s3 bucket and then read locally.
