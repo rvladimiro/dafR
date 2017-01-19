@@ -40,17 +40,20 @@ PostgreSQLQuery <- function(query, id, yamlFile = '../db.yml') {
     )
     
     # Get data in chunks of 1000 rows
-    dataframe <- data.frame()
+    dataframe <- data.table::data.table()
     results <- suppressWarnings(RPostgreSQL::dbSendQuery(conn = connection, 
                                                          statement = query))
     
     while(!RPostgreSQL::dbHasCompleted(res = results)) {
-        dataframe <- rbind(
+        dataframe <- data.table::rbindlist(list(
             dataframe,
-            suppressWarnings(RPostgreSQL::fetch(res = results, n = 1000))
-        )
+            data.table::as.data.table(
+                suppressWarnings(RPostgreSQL::fetch(res = results, n = 1000))
+            )
+        ))
         Windmill("Fetched", nrow(dataframe), "rows")
     }
+    
     
     # Clean up -----------------------------------------------------------------
     
