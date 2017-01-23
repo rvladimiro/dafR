@@ -1,7 +1,7 @@
 #' @export
 #' @name RedshiftQuery
 #' @title Query data from a Redshift database
-#' @author Henrique Cabral and Ricardo Vladimiro
+#' @author Henrique Cabral, Ricardo Vladimiro and João Monteiro
 #' @description This functions runs queries pn Redshift via the UNLOAD command.
 #' The query is unloaded to an s3 bucket and then read locally.
 #' It handles connecting, querying, reading from s3 and disconnecting. The query can either be passed directly as a string or as a path to a file containing a SQL statement.
@@ -9,6 +9,11 @@
 #' The yaml file must contain host, dbname, s3 bucket name, user and password.
 #' 
 #' This function, as opposed to PostgreSQLQuery, is intended to run large queries that might return a large amount of data or take some time to complete.
+#' @param query Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query
+#' @param dbID The name of the yaml group containing the database credentials
+#' @param s3ID The name of the yaml group containing the s3 bucket credentials
+#' @param yamlConfig The path to the yaml file
+#' @return The function will return a data.table object with the results of the query. In the case of a timeout it will return a string with the path of the created files on the s3 bucket
 RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
 
     # Error checking and loading -----------------------------------------------
@@ -39,9 +44,18 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
     )
     
     # Prefixes for files to be created on the s3 buckets
-    s3FilePrefix <- paste0(GetProjectName(),
-                           "-",
-                           format(Sys.time(), "%Y%m%d-%H%M%S"))
+    queryUser <- Sys.getenv('LOGNAME')
+    s3FilePrefix <- paste0(
+        ifelse(
+            queryUser == '',
+            'unknown',
+            queryUser
+        ),
+        "/",
+        GetProjectName(),
+        "/",
+        format(Sys.time(), "%Y%m%d-%H%M%S")
+    )
     s3FilePrefix <- gsub(" ", "_", s3FilePrefix)
 
     # Get the clean query statement
@@ -76,12 +90,43 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
 
     # Get the error code (if any) from the query
     Say("Running query.")
+    
+    # register start time to identify timeout errors
+    queryStartTime <- Sys.time()
+    
     # Hold on to error code in case this goes boom!
     errorCode <- try(
         results <- RPostgreSQL::dbSendQuery(conn = connection,
                                             statement = query)
     )
-
+    
+    # Calculate execution time
+    queryExecTime <- abs(difftime(queryStartTime, Sys.time(), units = 'mins'))
+    
+    # If the query fails then return the s3 for manual download
+    if (class(errorCode) == 'try-error') {
+        if (queryExecTime > 10) {
+            
+            Shout(paste(
+                'Query timed out.\n',
+                'Use the returned string to fetch data from s3 once the query completes'
+            ))
+            
+            return(paste0(
+                s3Config$folder, s3FilePrefix
+            ))
+            
+        } else {
+            stop('Query Failed')
+        }
+        
+    }
+    
+    # print out execution time
+    Say(paste(
+        'Query completed in', round(queryExecTime, 2), 'mins'
+    ))
+    
     # Get the query ID
     Say("Getting query ID.")
     queryIDResults <- RPostgreSQL::dbSendQuery(
@@ -115,67 +160,13 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
     # Remove extra spaces
     s3FileList <- gsub(pattern = " ", replacement = "", x = s3FileList$path)
 
-    # Read objects from S3
-    nOfFiles <- length(s3FileList)
-    
-    Say("Copying files from S3:")
-    
-    # Read all objects from s3 by using path on file list
-    s3Objects <- sapply(
-        seq_len(nOfFiles),
-        FUN = function(i) {
-            Windmill("Copying file", i, "of", nOfFiles)
-            aws.s3::get_object(s3FileList[i])
-        }
+    # Get data frame from s3 bucket
+    dt <- S3GetUnload(
+        s3FileList,
+        dbID = dbID,
+        s3ID = s3ID,
+        yamlConfig = yamlConfig
     )
-    
-    # Exlude all objects with 0 bites, i.e, length 0
-    s3Objects <- s3Objects[sapply(s3Objects, FUN = function(x) length(x) > 0)]
-    
-    
-    # Read objects as data.frame
-    Say("Reading files as data.table:")
-    
-    nOfObjs <- length(s3Objects)
-    
-    s3DataFrames <- lapply(
-        seq_len(nOfObjs),
-        FUN = function(n) {
-            Windmill("Reading", n, "of", nOfObjs)
-            iotools::read.delim.raw(
-                rawConnection(s3Objects[[n]]),
-                sep = ';', header = FALSE
-            )
-        }
-    )
-    
-    # Close all opened connections
-    closeAllConnections()
-    
-    # Create data.table
-    Say("Creating data frame...")
-    dt <- data.table::rbindlist(s3DataFrames)
-    
-    
-    # Find and fix int64 columns
-    int64Columns <- grep("integer64", sapply(dt, class))
-    if(length(int64Columns) > 0) {
-        for(column in int64Columns) {
-            dt[[column]] <- as.integer(dt[[column]])
-        }
-    }
-
-    
-    # Finally delete files from s3
-    Say("Removing files from s3")
-    delRes <- sapply(
-        seq_len(nOfFiles),
-        FUN = function(i) {
-            Windmill("Deleting file", i, "of", nOfFiles)
-            aws.s3::delete_object(s3FileList[i])
-        }
-    )
-    
     
     return(dt)
 

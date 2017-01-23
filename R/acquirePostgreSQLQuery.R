@@ -11,7 +11,7 @@
 #' @param id The server ID in the yaml config file
 #' @param yamlFile The server configuration yaml file
 #' @return A dataframe with the result of the query
-PostgreSQLQuery <- function(query, id, yamlFile = '../db.yml') {
+PostgreSQLQuery <- function(query, id, yamlFile = '../db.yml', printProgress = TRUE) {
     
     # Load and error checking --------------------------------------------------
     
@@ -50,8 +50,9 @@ PostgreSQLQuery <- function(query, id, yamlFile = '../db.yml') {
             data.table::as.data.table(
                 suppressWarnings(RPostgreSQL::fetch(res = results, n = 1000))
             )
-        ))
-        Windmill("Fetched", nrow(dataframe), "rows")
+        ), fill = TRUE)
+        if (printProgress)
+            Windmill("Fetched", nrow(dataframe), "rows")
     }
     
     

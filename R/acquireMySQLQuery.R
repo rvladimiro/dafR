@@ -47,7 +47,7 @@ MySQLQuery <- function(query, id, yamlFile = '../db.yml') {
             as.data.table(
                 suppressWarnings(RMySQL::fetch(res = results, n = 1000))
             )
-        ))
+        ), fill = TRUE)
         Windmill("Fetched", nrow(dataframe), "rows")
     }
     

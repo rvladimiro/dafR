@@ -6,14 +6,28 @@
 \usage{
 RedshiftQuery(query, dbID, s3ID, yamlConfig = "../db.yml")
 }
+\arguments{
+\item{query}{Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query}
+
+\item{dbID}{The name of the yaml group containing the database credentials}
+
+\item{s3ID}{The name of the yaml group containing the s3 bucket credentials}
+
+\item{yamlConfig}{The path to the yaml file}
+}
+\value{
+The function will return a data.table object with the results of the query. In the case of a timeout it will return a string with the path of the created files on the s3 bucket
+}
 \description{
-Describe this thing
-Get the clean query statement
-- The 1st GetQueryStatement will return the intended query
-- Next we escape quotes
-- The 2nd GetQueryStatement will return the version with the unload code.
+This functions runs queries pn Redshift via the UNLOAD command.
+The query is unloaded to an s3 bucket and then read locally.
+It handles connecting, querying, reading from s3 and disconnecting. The query can either be passed directly as a string or as a path to a file containing a SQL statement.
+
+The yaml file must contain host, dbname, s3 bucket name, user and password.
+
+This function, as opposed to PostgreSQLQuery, is intended to run large queries that might return a large amount of data or take some time to complete.
 }
 \author{
-Henrique Cabral and Ricardo Vladimiro
+Henrique Cabral, Ricardo Vladimiro and João Monteiro
 }
 
