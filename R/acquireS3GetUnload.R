@@ -182,7 +182,7 @@ S3GetUnload <- function(filePrefix,
         )
         
         # Stop the cluster
-        stopCluster(clusterForPar)
+        parallel::stopCluster(clusterForPar)
         
     } else {
         
