@@ -12,8 +12,15 @@
 #' @param dbID The name of the yaml group containing the database credentials
 #' @param s3ID The name of the yaml group containing the s3 bucket credentials
 #' @param yamlConfig The path to the yaml file
+#' @param acceleration Use s3 bucket acceleration
+#' @param parallel Use parallel package for simultaneous connections to s3
 #' @return The function will return a data.table object with the content of the files that were read from the s3 bucket
-S3GetUnload <- function(filePrefix, dbID, s3ID, yamlConfig = '../db.yml') {
+S3GetUnload <- function(filePrefix, 
+                        dbID, 
+                        s3ID, 
+                        yamlConfig = '../db.yml',
+                        acceleration = TRUE,
+                        parallel = TRUE) {
     
     # Get the s3ID configuration
     # read s3 credentials
@@ -62,16 +69,40 @@ S3GetUnload <- function(filePrefix, dbID, s3ID, yamlConfig = '../db.yml') {
     # Read objects from S3
     nOfFiles <- length(s3FileList)
     
-    Say("Copying files from S3:")
+    Say("Copying files from s3")
     
     # Read all objects from s3 by using path on file list
-    s3Objects <- lapply(
-        seq_len(nOfFiles),
-        FUN = function(i) {
-            Windmill("Copying file", i, "of", nOfFiles)
-            aws.s3::get_object(s3FileList[i])
-        }
-    )
+    if (parallel) {
+        
+        # detect number of cores
+        numCores <- parallel::detectCores()
+        
+        # make a cluster equal to the number of cores
+        clusterForPar <- parallel::makeCluster(numCores)
+        
+        s3Objects <- parallel::parLapply(clusterForPar,
+            seq_len(nOfFiles),
+            fun = function(i) {
+                Windmill("Copying file", i, "of", nOfFiles)
+                aws.s3::get_object(s3FileList[i], accelerate = acceleration)
+            }
+        )
+        
+        # stop the cluster
+        parallel::stopCluster(clusterForPar)
+        
+    } else {
+        
+        s3Objects <- lapply(
+            seq_len(nOfFiles),
+            FUN = function(i) {
+                Windmill("Copying file", i, "of", nOfFiles)
+                aws.s3::get_object(s3FileList[i], accelerate = acceleration)
+            }
+        )
+        
+    }
+    
     
     # Exlude all objects with 0 bites, i.e, length 0
     s3Objects <- s3Objects[sapply(s3Objects, FUN = function(x) length(x) > 0)]
@@ -81,17 +112,41 @@ S3GetUnload <- function(filePrefix, dbID, s3ID, yamlConfig = '../db.yml') {
     
     # Read objects as data.frame
     Say("Reading files as data.table:")
+    if (parallel) {
+        
+        # make a cluster equal to the number of cores
+        clusterForPar <- parallel::makeCluster(numCores)
+        
+        s3DataFrames <- suppressWarnings(parallel::parLapply(
+            clusterForPar,
+            seq_len(nOfObjs),
+            fun = function(n) {
+                Windmill("Reading", n, "of", nOfObjs)
+                iotools::read.delim.raw(
+                    rawConnection(s3Objects[[n]]),
+                    sep = ';', header = FALSE
+                )
+            }
+        ))
+        
+        # stop the cluster
+        parallel::stopCluster(clusterForPar)
+        
+    } else {
+        
+        s3DataFrames <- suppressWarnings(lapply(
+            seq_len(nOfObjs),
+            FUN = function(n) {
+                Windmill("Reading", n, "of", nOfObjs)
+                iotools::read.delim.raw(
+                    rawConnection(s3Objects[[n]]),
+                    sep = ';', header = FALSE
+                )
+            }
+        ))
+        
+    }
     
-    s3DataFrames <- suppressWarnings(lapply(
-        seq_len(nOfObjs),
-        FUN = function(n) {
-            Windmill("Reading", n, "of", nOfObjs)
-            iotools::read.delim.raw(
-                rawConnection(s3Objects[[n]]),
-                sep = ';', header = FALSE
-            )
-        }
-    ))
     
     # Close all opened connections
     closeAllConnections()
@@ -112,13 +167,34 @@ S3GetUnload <- function(filePrefix, dbID, s3ID, yamlConfig = '../db.yml') {
     
     # Finally delete files from s3
     Say("Removing files from s3")
-    delRes <- sapply(
-        seq_len(nOfFiles),
-        FUN = function(i) {
-            Windmill("Deleting file", i, "of", nOfFiles)
-            aws.s3::delete_object(s3FileList[i])
-        }
-    )
+    if (parallel) {
+        
+        # make a cluster equal to the number of cores
+        clusterForPar <- parallel::makeCluster(numCores)
+        
+        delRes <- parallel::parSapply(
+            clusterForPar,
+            seq_len(nOfFiles),
+            FUN = function(i) {
+                Windmill("Deleting file", i, "of", nOfFiles)
+                aws.s3::delete_object(s3FileList[i], accelerate = acceleration)
+            }
+        )
+        
+        # Stop the cluster
+        stopCluster(clusterForPar)
+        
+    } else {
+        
+        delRes <- sapply(
+            seq_len(nOfFiles),
+            FUN = function(i) {
+                Windmill("Deleting file", i, "of", nOfFiles)
+                aws.s3::delete_object(s3FileList[i], accelerate = acceleration)
+            }
+        )
+        
+    }
     
     
     return(dt)

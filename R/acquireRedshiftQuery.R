@@ -13,8 +13,15 @@
 #' @param dbID The name of the yaml group containing the database credentials
 #' @param s3ID The name of the yaml group containing the s3 bucket credentials
 #' @param yamlConfig The path to the yaml file
+#' @param acceleration Use s3 bucket acceleration
+#' @param parallel Use parallel package for simultaneous connections to s3
 #' @return The function will return a data.table object with the results of the query. In the case of a timeout it will return a string with the path of the created files on the s3 bucket
-RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
+RedshiftQuery <- function(query, 
+                          dbID, 
+                          s3ID, 
+                          yamlConfig = '../db.yml',
+                          acceleration = TRUE,
+                          parallel= TRUE) {
 
     # Error checking and loading -----------------------------------------------
 
@@ -44,7 +51,8 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
     )
     
     # Prefixes for files to be created on the s3 buckets
-    queryUser <- Sys.getenv('LOGNAME')
+    # remove all . and substitute with _
+    queryUser <- gsub('[.]', '_', Sys.getenv('LOGNAME'))
     s3FilePrefix <- paste0(
         ifelse(
             queryUser == '',
@@ -57,6 +65,7 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
         format(Sys.time(), "%Y%m%d-%H%M%S")
     )
     s3FilePrefix <- gsub(" ", "_", s3FilePrefix)
+    s3FilePrefix <- gsub("[.]", "_", s3FilePrefix)
 
     # Get the clean query statement
     # - The 1st GetQueryStatement will return the intended query
@@ -165,7 +174,9 @@ RedshiftQuery <- function(query, dbID, s3ID, yamlConfig = '../db.yml') {
         s3FileList,
         dbID = dbID,
         s3ID = s3ID,
-        yamlConfig = yamlConfig
+        yamlConfig = yamlConfig,
+        acceleration = acceleration,
+        parallel = parallel
     )
     
     return(dt)

@@ -4,7 +4,8 @@
 \alias{S3GetUnload}
 \title{Read s3 files generated from Unload SQL command}
 \usage{
-S3GetUnload(filePrefix, dbID, s3ID, yamlConfig = "../db.yml")
+S3GetUnload(filePrefix, dbID, s3ID, yamlConfig = "../db.yml",
+  acceleration = TRUE, parallel = TRUE)
 }
 \arguments{
 \item{filePrefix}{Either a character vector with length 1, with the prefix shared by the objects to be read, or a character vector listing the full path of each obejct to be read}
@@ -14,6 +15,10 @@ S3GetUnload(filePrefix, dbID, s3ID, yamlConfig = "../db.yml")
 \item{s3ID}{The name of the yaml group containing the s3 bucket credentials}
 
 \item{yamlConfig}{The path to the yaml file}
+
+\item{acceleration}{Use s3 bucket acceleration}
+
+\item{parallel}{Use parallel package for simultaneous connections to s3}
 }
 \value{
 The function will return a data.table object with the content of the files that were read from the s3 bucket

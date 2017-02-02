@@ -4,7 +4,8 @@
 \alias{RedshiftQuery}
 \title{Query data from a Redshift database}
 \usage{
-RedshiftQuery(query, dbID, s3ID, yamlConfig = "../db.yml")
+RedshiftQuery(query, dbID, s3ID, yamlConfig = "../db.yml",
+  acceleration = TRUE, parallel = TRUE)
 }
 \arguments{
 \item{query}{Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query}
@@ -14,6 +15,10 @@ RedshiftQuery(query, dbID, s3ID, yamlConfig = "../db.yml")
 \item{s3ID}{The name of the yaml group containing the s3 bucket credentials}
 
 \item{yamlConfig}{The path to the yaml file}
+
+\item{acceleration}{Use s3 bucket acceleration}
+
+\item{parallel}{Use parallel package for simultaneous connections to s3}
 }
 \value{
 The function will return a data.table object with the results of the query. In the case of a timeout it will return a string with the path of the created files on the s3 bucket
