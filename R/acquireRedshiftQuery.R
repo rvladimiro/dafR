@@ -51,6 +51,12 @@ RedshiftQuery <- function(query,
     )
     
     # Prefixes for files to be created on the s3 buckets
+    # Use project name to identify path in s3
+    # If project structure is non existent use a default name
+    projName <- try(GetProjectName(), silent = TRUE)
+    if (class(projName) == 'try-error')
+        projName <- 'ad_hoc_queries'
+    
     # remove all . and substitute with _
     queryUser <- gsub('[.]', '_', Sys.getenv('LOGNAME'))
     s3FilePrefix <- paste0(
@@ -60,7 +66,7 @@ RedshiftQuery <- function(query,
             queryUser
         ),
         "/",
-        GetProjectName(),
+        projName,
         "/",
         format(Sys.time(), "%Y%m%d-%H%M%S")
     )
