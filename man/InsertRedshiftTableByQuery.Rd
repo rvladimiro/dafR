@@ -10,7 +10,7 @@ InsertRedshiftTableByQuery(query, tableName, schema = "development",
 \arguments{
 \item{query}{Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query}
 
-\item{tableName}{The name of the table to create or append to}
+\item{tableName}{The name of the redshift table to create or append to}
 
 \item{schema}{Character vector with length 1 with the name of the DB schema were the table will be created}
 

@@ -8,17 +8,21 @@ InsertDataFrameToRedshift(df, tableName, columnTypes, schema = "development",
   clean = TRUE, dbID, s3ID, yamlConfig = "../db.yml")
 }
 \arguments{
-\item{tableName}{The name of the table to create or append to}
+\item{df}{a data.frame or data.frame like object}
+
+\item{tableName}{The name of the redshift table to create or append to}
+
+\item{columnTypes}{A character vector with the same length as the number of columns on df. Each element must be a Redshift compatible type. If not provided, te column types will be guessed automatically}
 
 \item{schema}{Character vector with length 1 with the name of the DB schema were the table will be created}
 
 \item{clean}{Boolean indicating whether or not to remove existing records from the table before inserting}
 
-\item{query}{Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query}
+\item{dbID}{The name of the yaml group containing the database credentials}
 
-\item{id}{The name of the yaml group containing the database credentials}
+\item{s3ID}{The name of the yaml group containing the s3 bucket credentials}
 
-\item{yamlFile}{The path to the yaml file}
+\item{yamlConfig}{The path to the yaml file}
 }
 \value{
 The function will return a boolean value indicating if the process completed successfully
