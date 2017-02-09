@@ -8,7 +8,7 @@
 #' 
 #' The yaml file must contain host, dbname, user and password.
 #' @param query Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query
-#' @param tableName The name of the table to create or append to
+#' @param tableName The name of the redshift table to create or append to
 #' @param schema Character vector with length 1 with the name of the DB schema were the table will be created
 #' @param clean Boolean indicating whether or not to remove existing records from the table before inserting
 #' @param id The name of the yaml group containing the database credentials

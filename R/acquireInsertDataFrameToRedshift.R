@@ -6,12 +6,14 @@
 #' This copy is done by first copying then object onto and s3 bucket as a .csv, and then uploading to redshift from there.
 #' 
 #' The yaml file must contain host, dbname, s3 bucket name, user and password.
-#' @param query Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query
-#' @param tableName The name of the table to create or append to
+#' @param df a data.frame or data.frame like object
+#' @param tableName The name of the redshift table to create or append to
+#' @param columnTypes A character vector with the same length as the number of columns on df. Each element must be a Redshift compatible type. If not provided, te column types will be guessed automatically
 #' @param schema Character vector with length 1 with the name of the DB schema were the table will be created
 #' @param clean Boolean indicating whether or not to remove existing records from the table before inserting
-#' @param id The name of the yaml group containing the database credentials
-#' @param yamlFile The path to the yaml file
+#' @param dbID The name of the yaml group containing the database credentials
+#' @param s3ID The name of the yaml group containing the s3 bucket credentials
+#' @param yamlConfig The path to the yaml file
 #' @return The function will return a boolean value indicating if the process completed successfully
 InsertDataFrameToRedshift <- function(df, 
                                       tableName,
