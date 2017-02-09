@@ -38,7 +38,7 @@ S3GetUnload <- function(filePrefix,
         )
     )
     
-    # If only one string was passedthan it's assumed it is a general prefix
+    # If only one string was passed than it's assumed it is a general prefix
     if (length(filePrefix) == 1) {
         
         # Get the full lits of files from stl_unload_log table
