@@ -20,6 +20,7 @@
 #' @param groupColumn The name of the column that contains the group identification
 #' @param bootIterations The number of bootstrap resamples to perform
 #' @param bootConfLevel The confidence level for the interval. Between 1 and 100
+#' @param parallel Whether to use parallel package for the bootstrapped estimates. Defaults to TRUE
 #' @return List containing two dataframes. The first dataframe contains the boundaries of the CI. The second dataframe contains all calculated estimates for the mean of each group
 GetBootstrappedCI <- function(dataset,
                               testGroups,
@@ -27,7 +28,8 @@ GetBootstrappedCI <- function(dataset,
                               responseColumn = 'response',
                               groupColumn = 'abGroup',
                               bootIterations = 999,
-                              bootConfLevel = 95) {
+                              bootConfLevel = 95,
+                              parallel= TRUE) {
     
     
     # Make sure dataset is a data table
@@ -60,10 +62,16 @@ GetBootstrappedCI <- function(dataset,
         get(groupColumn) == controlGroup, get(responseColumn)
     ]
     
-    controlBootEstimate <- attr(Hmisc::smean.cl.boot(
-        controlResponse, B = bootIterations, reps = TRUE
-    ), 'reps')
-    
+    # Calculate meanbootstrapped means for control
+    if (parallel) {
+        controlBootEstimate <- attr(parallelMeanBoot(
+            controlResponse, B = bootIterations, reps = TRUE
+        ), 'reps')
+    } else {
+        controlBootEstimate <- attr(Hmisc::smean.cl.boot(
+            controlResponse, B = bootIterations, reps = TRUE
+        ), 'reps')
+    }
     
     # Initialise results 
     bootResultsCI <- data.table::data.table()
@@ -82,9 +90,15 @@ GetBootstrappedCI <- function(dataset,
         
         # Get test group bootrapped estimate for response variable
         testResponse <- dataset[get(groupColumn) == gr, get(responseColumn)]
-        testBootEstimate <- attr(Hmisc::smean.cl.boot(
-            testResponse, B = bootIterations, reps = TRUE
-        ), 'reps')
+        if (parallel) {
+            testBootEstimate <- attr(parallelMeanBoot(
+                testResponse, B = bootIterations, reps = TRUE
+            ), 'reps')
+        } else {
+            testBootEstimate <- attr(Hmisc::smean.cl.boot(
+                testResponse, B = bootIterations, reps = TRUE
+            ), 'reps')
+        }
         
         # get quantile values from difference in estimates to get CI
         lowHighCI <- quantile(

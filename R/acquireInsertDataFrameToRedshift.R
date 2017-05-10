@@ -117,9 +117,9 @@ InsertDataFrameToRedshift <- function(df,
                 return('int')
             } else if (is.numeric(x)){
                 return('float')
-            } else if (is.POSIXct(x) & mean(nchar(as.character(x)), na.rm = T) > 10) {
+            } else if (lubridate::is.POSIXct(x) & mean(nchar(as.character(x)), na.rm = T) > 10) {
                 return('datetime')
-            } else if (is.POSIXct(x) | is.Date(x)) {
+            } else if (lubridate::is.POSIXct(x) | is.Date(x)) {
                 return('date')
             } else {
                 return('varchar(255)')

@@ -6,7 +6,7 @@
 \usage{
 GetBootstrappedCI(dataset, testGroups, controlGroup = "Control",
   responseColumn = "response", groupColumn = "abGroup",
-  bootIterations = 999, bootConfLevel = 95)
+  bootIterations = 999, bootConfLevel = 95, parallel = TRUE)
 }
 \arguments{
 \item{dataset}{The dataset containing one observation per row}
@@ -22,6 +22,8 @@ GetBootstrappedCI(dataset, testGroups, controlGroup = "Control",
 \item{bootIterations}{The number of bootstrap resamples to perform}
 
 \item{bootConfLevel}{The confidence level for the interval. Between 1 and 100}
+
+\item{parallel}{Whether to use parallel package for the bootstrapped estimates. Defaults to TRUE}
 }
 \value{
 List containing two dataframes. The first dataframe contains the boundaries of the CI. The second dataframe contains all calculated estimates for the mean of each group
