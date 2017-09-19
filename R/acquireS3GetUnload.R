@@ -78,7 +78,7 @@ S3GetUnload <- function(filePrefix,
         numCores <- parallel::detectCores()
         
         # make a cluster equal to the number of cores
-        clusterForPar <- parallel::makeCluster(numCores)
+        clusterForPar <- parallel::makeCluster(numCores, type = 'FORK')
         
         s3Objects <- parallel::parLapply(clusterForPar,
             seq_len(nOfFiles),
@@ -115,7 +115,7 @@ S3GetUnload <- function(filePrefix,
     if (parallel) {
         
         # make a cluster equal to the number of cores
-        clusterForPar <- parallel::makeCluster(numCores)
+        clusterForPar <- parallel::makeCluster(numCores, type = 'FORK')
         
         s3DataFrames <- suppressWarnings(parallel::parLapply(
             clusterForPar,
@@ -170,7 +170,7 @@ S3GetUnload <- function(filePrefix,
     if (parallel) {
         
         # make a cluster equal to the number of cores
-        clusterForPar <- parallel::makeCluster(numCores)
+        clusterForPar <- parallel::makeCluster(numCores, type = 'FORK')
         
         delRes <- parallel::parSapply(
             clusterForPar,

@@ -28,7 +28,7 @@ parallelMeanBoot <- function (x,
     numCores <- parallel::detectCores()
     
     # make a cluster equal to the number of cores
-    clusterForPar <- parallel::makeCluster(numCores)
+    clusterForPar <- parallel::makeCluster(numCores - 1, type = 'FORK')
     
     # bootstrapped means
     z <- unlist(parallel::parLapply(

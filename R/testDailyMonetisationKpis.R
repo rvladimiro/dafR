@@ -29,7 +29,8 @@ PerformDailyMonetisationTests <- function(dataset,
                                           groupColumn = 'abGroup',
                                           controlName = 'Control',
                                           bootIterations = 999, 
-                                          bootConfLevel = 95, ...) {
+                                          bootConfLevel = 95,
+                                          parallelBoot = TRUE, ...) {
     
     
     # Make sure dataset is a data table
@@ -74,7 +75,8 @@ PerformDailyMonetisationTests <- function(dataset,
     bootstrapEstimatesResults <- GetBootstrappedCI(
         dataset = dataset, testGroups = groups, controlGroup = controlName,
         groupColumn = groupColumn,
-        bootIterations = bootIterations, bootConfLevel = bootConfLevel
+        bootIterations = bootIterations, bootConfLevel = bootConfLevel,
+        parallel = parallelBoot
     )
     
     

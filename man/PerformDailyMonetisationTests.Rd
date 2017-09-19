@@ -6,7 +6,7 @@
 \usage{
 PerformDailyMonetisationTests(dataset, kpi, revenueColumn = "revenue",
   groupColumn = "abGroup", controlName = "Control", bootIterations = 999,
-  bootConfLevel = 95, ...)
+  bootConfLevel = 95, parallelBoot = TRUE, ...)
 }
 \arguments{
 \item{dataset}{The dataset containing one observation per row}
