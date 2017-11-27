@@ -26,3 +26,4 @@ vignettes/*.pdf
 
 # RDS files - RDS files on data folder can be backed up on S3 folders
 *.rds
+*.RDS
