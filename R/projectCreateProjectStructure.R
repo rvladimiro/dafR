@@ -1,5 +1,5 @@
 #' @export
-#' @author Ricardo Vladimiro
+#' @author Ricardo Vladimiro, Daniela Cunha
 #' @name CreateProjectStructure
 #' @title Create base directories and files.
 #' @description Creates directory code and data and git ignore file. The git ignore file is from https://github.com/github/gitignore/blob/master/R.gitignore plus any additions from us.
