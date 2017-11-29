@@ -9,4 +9,3 @@ SaveProjectEnvironment()
 \author{
 Ricardo Vladimiro
 }
-

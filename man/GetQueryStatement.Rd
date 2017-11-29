@@ -15,4 +15,3 @@ A character vector ready to be used on queries
 \author{
 Ricardo Vladimiro
 }
-

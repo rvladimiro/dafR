@@ -5,7 +5,7 @@
 \title{Creates a Redshift table with the same contents as the given R data frame}
 \usage{
 InsertDataFrameToRedshift(df, tableName, columnTypes, schema = "development",
-  clean = TRUE, dbID, s3ID, yamlConfig = "../db.yml")
+  clean = TRUE, dbID, s3ID, yamlConfig = "~/db.yml")
 }
 \arguments{
 \item{df}{a data.frame or data.frame like object}
@@ -36,4 +36,3 @@ The yaml file must contain host, dbname, s3 bucket name, user and password.
 \author{
 João Monteiro and Henrique Cabral
 }
-

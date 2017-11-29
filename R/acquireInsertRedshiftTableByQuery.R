@@ -19,7 +19,7 @@ InsertRedshiftTableByQuery <- function(query,
                                        schema = 'development',
                                        clean = TRUE,
                                        id,                                        
-                                       yamlFile = '../db.yml') {
+                                       yamlFile = '~/db.yml') {
     
     
     ## Check if the table already exists

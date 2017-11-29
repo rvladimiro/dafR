@@ -5,7 +5,7 @@
 \title{Creates a table with the results of a given SQL query}
 \usage{
 InsertRedshiftTableByQuery(query, tableName, schema = "development",
-  clean = TRUE, id, yamlFile = "../db.yml")
+  clean = TRUE, id, yamlFile = "~/db.yml")
 }
 \arguments{
 \item{query}{Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query}
@@ -33,4 +33,3 @@ The yaml file must contain host, dbname, user and password.
 \author{
 João Monteiro
 }
-

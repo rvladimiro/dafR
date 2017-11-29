@@ -23,12 +23,16 @@ CreateProjectStructure <- function() {
         Say('Project directory created.')
     }
     
-    # Add .gitignore if missing
-    if(!'.gitignore' %in% list.files(all.files = T)) {
-        file.copy(
-            from = paste0(path.package('dafR'), '/gitignore'),
-            to = '.gitignore'
-        )
-        Say('.gitignore file added.')
+    # Create queries directory if missing
+    if(!'./queries' %in% list.dirs()) {
+        dir.create('queries')
+        Say('Queries directory created.')
     }
+    
+    # Add .gitignore
+    file.copy(
+        from = paste0(path.package('dafR'), '/gitignore'),
+        to = '.gitignore'
+    )
+    Say('.gitignore file added.')
 }

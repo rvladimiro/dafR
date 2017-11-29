@@ -15,4 +15,3 @@ Say has the same behavior as cat but adds a carriage return to the end. It will 
 \author{
 Ricardo Vladimiro
 }
-

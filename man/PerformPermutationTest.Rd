@@ -37,4 +37,3 @@ Returns all p-values and statistics for each comparison to control
 \author{
 João Monteiro
 }
-

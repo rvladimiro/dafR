@@ -9,4 +9,3 @@ CheckDataDirectory()
 \author{
 Ricardo Vladimiro
 }
-

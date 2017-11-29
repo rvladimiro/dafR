@@ -9,4 +9,3 @@ CheckProjectDirectory()
 \author{
 Ricardo Vladimiro
 }
-

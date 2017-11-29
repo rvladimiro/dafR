@@ -19,7 +19,7 @@
 RedshiftQuery <- function(query, 
                           dbID, 
                           s3ID, 
-                          yamlConfig = '../db.yml',
+                          yamlConfig = '~/db.yml',
                           acceleration = TRUE,
                           parallel= TRUE) {
 

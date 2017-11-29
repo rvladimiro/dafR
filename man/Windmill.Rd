@@ -12,4 +12,3 @@ Windmill(...)
 \description{
 Say something in the same line while updating a windmill text animation. Serves to give visual feedback.
 }
-

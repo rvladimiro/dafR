@@ -43,4 +43,3 @@ Returns the calculated statistics for each bootstrap iteration as well as the bo
 \author{
 João Monteiro
 }
-

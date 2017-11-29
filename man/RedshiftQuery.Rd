@@ -4,7 +4,7 @@
 \alias{RedshiftQuery}
 \title{Query data from a Redshift database}
 \usage{
-RedshiftQuery(query, dbID, s3ID, yamlConfig = "../db.yml",
+RedshiftQuery(query, dbID, s3ID, yamlConfig = "~/db.yml",
   acceleration = TRUE, parallel = TRUE)
 }
 \arguments{
@@ -35,4 +35,3 @@ This function, as opposed to PostgreSQLQuery, is intended to run large queries t
 \author{
 Henrique Cabral, Ricardo Vladimiro and João Monteiro
 }
-

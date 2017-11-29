@@ -12,4 +12,3 @@ Shout(...)
 \description{
 Shout is a cat to stderr, meaning it will print like an error but without halting execution. It will output a sentence built from the arguments passed. A carriage return is added for ease of use.
 }
-

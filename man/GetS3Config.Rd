@@ -17,4 +17,3 @@ A list of configuration parameters
 \author{
 Ricardo Vladimiro
 }
-

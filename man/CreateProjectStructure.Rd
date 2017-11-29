@@ -12,4 +12,3 @@ Creates directory code and data and git ignore file. The git ignore file is from
 \author{
 Ricardo Vladimiro
 }
-

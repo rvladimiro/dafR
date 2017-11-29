@@ -3,7 +3,7 @@
 .Rapp.history
 
 # Session Data files
-.RData
+*.RData
 
 # Example code in package build process
 *-Ex.R
@@ -18,8 +18,9 @@
 .Rproj.user/
 
 # Produced Vignettes
-vignettes/*.html
-vignettes/*.pdf
+*.html
+*.pdf
+*.dcf
 
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth

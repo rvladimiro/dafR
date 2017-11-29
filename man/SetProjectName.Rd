@@ -17,4 +17,3 @@ The functions that use GetProjectName are:
 \author{
 Ricardo Vladimiro
 }
-

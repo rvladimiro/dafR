@@ -4,7 +4,7 @@
 \alias{S3GetUnload}
 \title{Read s3 files generated from Unload SQL command}
 \usage{
-S3GetUnload(filePrefix, dbID, s3ID, yamlConfig = "../db.yml",
+S3GetUnload(filePrefix, dbID, s3ID, yamlConfig = "~/db.yml",
   acceleration = TRUE, parallel = TRUE)
 }
 \arguments{
@@ -34,4 +34,3 @@ The yaml file must contain s3 bucket name, user and password.
 \author{
 João Monteiro
 }
-

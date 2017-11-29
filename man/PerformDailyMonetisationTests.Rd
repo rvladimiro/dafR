@@ -44,4 +44,3 @@ Returns all the p-values and confidence interval boundaries for each treatement.
 \author{
 João Monteiro
 }
-

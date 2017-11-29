@@ -12,4 +12,3 @@ I'm only writing a description to avoid a warning. I'm a nice package creator. J
 \author{
 Ricardo Vladimiro
 }
-
