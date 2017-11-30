@@ -32,7 +32,8 @@ CreateProjectStructure <- function() {
     # Add .gitignore
     file.copy(
         from = paste0(path.package('dafR'), '/gitignore'),
-        to = '.gitignore'
+        to = paste0(getwd(), '/.gitignore'),
+        overwrite = TRUE
     )
     Say('.gitignore file added.')
 }
