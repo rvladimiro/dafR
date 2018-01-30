@@ -5,31 +5,32 @@
 \title{Creates a table with the results of a given SQL query}
 \usage{
 InsertRedshiftTableByQuery(query, tableName, schema = "development",
-  clean = TRUE, id, yamlFile = "~/db.yml")
+  keyColumn, clean = TRUE, id, yamlFile = "~/db.yml")
 }
 \arguments{
-\item{query}{Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query}
+\item{query}{Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query.}
 
-\item{tableName}{The name of the redshift table to create or append to}
+\item{tableName}{The name of the redshift table to create or append to.}
 
-\item{schema}{Character vector with length 1 with the name of the DB schema were the table will be created}
+\item{schema}{Character vector with length 1 with the name of the DB schema were the table will be created.}
 
-\item{clean}{Boolean indicating whether or not to remove existing records from the table before inserting}
+\item{keyColumn}{Optional. A character string or a character vector with the name of a column/columns to be used as sort keys in the newly created table. If nothing is specified, the table is created without sort keys.}
 
-\item{id}{The name of the yaml group containing the database credentials}
+\item{clean}{Boolean indicating whether or not to remove existing records from the table before inserting.}
 
-\item{yamlFile}{The path to the yaml file}
+\item{id}{The name of the yaml group containing the database credentials.}
+
+\item{yamlFile}{The path to the yaml file.}
 }
 \value{
-The function will return a boolean value indicating if the process completed successfully
+The function will return a boolean value indicating if the process completed successfully.
 }
 \description{
 Given a SQL query, this functions inserts it's results onto a redshift table.
 We can choose to clean the existing table records before inserting or to simply append.
-If the table does not exist, one will be automatically created
-
+If the table does not exist, one will be automatically created.
 The yaml file must contain host, dbname, user and password.
 }
 \author{
-João Monteiro
+João Monteiro and Daniela Cunha
 }
