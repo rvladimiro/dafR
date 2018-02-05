@@ -62,7 +62,7 @@ InsertRedshiftTableByQuery <- function(query,
             queryCreate <- paste(
                 "CREATE TABLE", 
                 paste(schema, tableName, sep = "."),
-                "DISTSTYLE EVEN INTERLEAVED SORTKEY(", paste(keyColumn, collapse = ','),
+                "DISTSTYLE EVEN COMPOUND SORTKEY(", paste(keyColumn, collapse = ','),
                 ") AS (", queryTable, ")" 
             )
             
@@ -121,7 +121,7 @@ InsertRedshiftTableByQuery <- function(query,
             queryCreate <- paste(
                 "CREATE TABLE", 
                 paste(schema, tableName, sep = "."),
-                "DISTSTYLE EVEN INTERLEAVED SORTKEY(", paste(keyColumn, collapse = ','),
+                "DISTSTYLE EVEN COMPOUND SORTKEY(", paste(keyColumn, collapse = ','),
                 ") AS (", queryTable, ")" 
             )
                 
