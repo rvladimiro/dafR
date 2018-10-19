@@ -21,4 +21,3 @@ If it doesn't get it from the working directory name, save it in
 \author{
 Ricardo Vladimiro
 }
-

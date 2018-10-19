@@ -27,4 +27,3 @@ Parallelized implementation of the smean.cl.boot function from the Hmisc package
 \author{
 João Monteiro
 }
-

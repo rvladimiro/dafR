@@ -12,4 +12,3 @@ Taken from the source help file and slightly changed to fit dafR
 \author{
 R Core Team and Ricardo Vladimiro
 }
-

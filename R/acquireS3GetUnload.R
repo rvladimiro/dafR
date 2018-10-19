@@ -18,7 +18,7 @@
 S3GetUnload <- function(filePrefix, 
                         dbID, 
                         s3ID, 
-                        yamlConfig = '../db.yml',
+                        yamlConfig = '~/db.yml',
                         acceleration = TRUE,
                         parallel = TRUE) {
     

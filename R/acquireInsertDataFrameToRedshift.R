@@ -22,7 +22,7 @@ InsertDataFrameToRedshift <- function(df,
                                       clean = TRUE,
                                       dbID, 
                                       s3ID, 
-                                      yamlConfig = '../db.yml') {
+                                      yamlConfig = '~/db.yml') {
     
     
     ## Write data frame as csv on the disk -------------------------------------

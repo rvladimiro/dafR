@@ -4,7 +4,7 @@
 \alias{MySQLQuery}
 \title{Query data from a MySQL server}
 \usage{
-MySQLQuery(query, id, yamlFile = "../db.yml")
+MySQLQuery(query, id, yamlFile = "~/db.yml")
 }
 \arguments{
 \item{query}{The query to be ran. It can be a file with SQL or a character vector}
@@ -24,4 +24,3 @@ The yaml file must contain host, dbname, user and password. Port is optional, if
 \author{
 Ricardo Vladimiro
 }
-

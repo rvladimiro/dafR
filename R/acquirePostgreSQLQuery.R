@@ -11,7 +11,7 @@
 #' @param id The server ID in the yaml config file
 #' @param yamlFile The server configuration yaml file
 #' @return A dataframe with the result of the query
-PostgreSQLQuery <- function(query, id, yamlFile = '../db.yml', printProgress = TRUE) {
+PostgreSQLQuery <- function(query, id, yamlFile = '~/db.yml', printProgress = TRUE) {
     
     # Load and error checking --------------------------------------------------
     

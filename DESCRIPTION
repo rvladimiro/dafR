@@ -9,5 +9,5 @@ Description: Collection of tools for data analysis. Includes functions to manage
 License: MIT + file LICENSE
 Imports: data.table
 LazyData: TRUE
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Suggests:

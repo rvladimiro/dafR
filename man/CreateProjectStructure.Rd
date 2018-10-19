@@ -10,6 +10,5 @@ CreateProjectStructure()
 Creates directory code and data and git ignore file. The git ignore file is from https://github.com/github/gitignore/blob/master/R.gitignore plus any additions from us.
 }
 \author{
-Ricardo Vladimiro
+Ricardo Vladimiro, Daniela Cunha
 }
-

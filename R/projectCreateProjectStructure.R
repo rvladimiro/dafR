@@ -1,5 +1,5 @@
 #' @export
-#' @author Ricardo Vladimiro
+#' @author Ricardo Vladimiro, Daniela Cunha
 #' @name CreateProjectStructure
 #' @title Create base directories and files.
 #' @description Creates directory code and data and git ignore file. The git ignore file is from https://github.com/github/gitignore/blob/master/R.gitignore plus any additions from us.
@@ -23,12 +23,17 @@ CreateProjectStructure <- function() {
         Say('Project directory created.')
     }
     
-    # Add .gitignore if missing
-    if(!'.gitignore' %in% list.files(all.files = T)) {
-        file.copy(
-            from = paste0(path.package('dafR'), '/gitignore'),
-            to = '.gitignore'
-        )
-        Say('.gitignore file added.')
+    # Create queries directory if missing
+    if(!'./queries' %in% list.dirs()) {
+        dir.create('queries')
+        Say('Queries directory created.')
     }
+    
+    # Add .gitignore
+    file.copy(
+        from = paste0(path.package('dafR'), '/gitignore'),
+        to = paste0(getwd(), '/.gitignore'),
+        overwrite = TRUE
+    )
+    Say('.gitignore file added.')
 }

@@ -44,4 +44,3 @@ Returns p-value for two-tailed test and statistics for each comparison to contro
 \author{
 João Monteiro
 }
-

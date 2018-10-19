@@ -4,7 +4,7 @@
 \alias{PostgreSQLQuery}
 \title{Query data from a PostgreSQL server}
 \usage{
-PostgreSQLQuery(query, id, yamlFile = "../db.yml", printProgress = TRUE)
+PostgreSQLQuery(query, id, yamlFile = "~/db.yml", printProgress = TRUE)
 }
 \arguments{
 \item{query}{The query to be ran. It can be a file with SQL or a character vector}
@@ -26,4 +26,3 @@ This function was created to run quick queries on Redshift. The difference betwe
 \author{
 Ricardo Vladimiro
 }
-

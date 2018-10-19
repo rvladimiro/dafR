@@ -2,7 +2,7 @@
 
 ## Summary
 
-dafR was born at Miniclip's Game Analytics & Data Science team. From utility functions in loose repositories to work methodologies discussed and implemented over time, many of the conventions are closely related to how we think and see data analysis.
+dafR was born at Miniclip's Game Analytics & Data Science teams. From utility functions in loose repositories to work methodologies discussed and implemented over time, many of the conventions are closely related to how we think and see data analysis.
 
 Although I think that data analysis is an iterative process that has a number of established steps, it is possible that how those steps are implemented in dafR don't exactly fit the way you work. Unfortunately that means that dafR won't help you fully.
 
@@ -22,6 +22,6 @@ The directory structure ensures that projects are packed as expected and that st
 
 #### YAML files
 
-Many functions depend on YAML files. These files often contain user names and passwords. By convention we use YAML files outside the project ensuring that files with sensitive information are not added to repositories. By default, the location of the YAML configuration files is in the directory above the project's root directory (and R's working directory).
+Many functions depend on YAML files. These files often contain user names and passwords. By convention we use YAML files outside the project ensuring that files with sensitive information are not added to repositories. By default, the location of the YAML configuration files is in the user home directory.
 
 What matters is: we do our best to avoid exposing usernames and passwords in the code and use YAML files to do it.
