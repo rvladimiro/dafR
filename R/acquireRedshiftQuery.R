@@ -21,7 +21,7 @@ RedshiftQuery <- function(query,
                           s3ID, 
                           yamlConfig = '~/db.yml',
                           acceleration = TRUE,
-                          parallel= TRUE) {
+                          parallel = TRUE) {
 
     # Error checking and loading -----------------------------------------------
 
@@ -87,9 +87,10 @@ RedshiftQuery <- function(query,
             "CREDENTIALS '",
             "aws_access_key_id=", s3Config$accessKey, ";",
             "aws_secret_access_key=", s3Config$secretKey, "'",
-            "DELIMITER ';' ALLOWOVERWRITE;"
+            "DELIMITER ';' GZIP ALLOWOVERWRITE;"
         )
     )
+    
 
     # Run the query ------------------------------------------------------------
 
@@ -160,6 +161,7 @@ RedshiftQuery <- function(query,
             statement = paste(
                 "SELECT path FROM stl_unload_log",
                 "WHERE query =", queryID,
+                "AND line_count > 0",
                 "ORDER BY path;"
             )
         )
@@ -174,7 +176,7 @@ RedshiftQuery <- function(query,
 
     # Remove extra spaces
     s3FileList <- gsub(pattern = " ", replacement = "", x = s3FileList$path)
-
+    
     # Get data frame from s3 bucket
     dt <- S3GetUnload(
         s3FileList,
@@ -184,6 +186,7 @@ RedshiftQuery <- function(query,
         acceleration = acceleration,
         parallel = parallel
     )
+    
     
     return(dt)
 

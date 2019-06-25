@@ -12,6 +12,9 @@ GetQueryStatement(query)
 \value{
 A character vector ready to be used on queries
 }
+\description{
+Get a clean query statement from a SQL file or string
+}
 \author{
 Ricardo Vladimiro
 }

@@ -6,6 +6,9 @@
 \usage{
 SaveProjectEnvironment()
 }
+\description{
+Saves the project environment in the project directory
+}
 \author{
 Ricardo Vladimiro
 }

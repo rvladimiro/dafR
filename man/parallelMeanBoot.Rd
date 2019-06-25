@@ -3,10 +3,6 @@
 \name{parallelMeanBoot}
 \alias{parallelMeanBoot}
 \title{Get Mean of vector by bootstrap}
-\usage{
-parallelMeanBoot(x, conf.int = 0.95, B = 1000, na.rm = TRUE,
-  reps = FALSE)
-}
 \arguments{
 \item{x}{numerical vector}
 

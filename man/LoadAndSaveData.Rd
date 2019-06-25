@@ -9,3 +9,8 @@ Load(object)
 
 Save(object)
 }
+\description{
+Load and save R objects from and to the data directory
+
+Load and save R objects from and to the data directory
+}

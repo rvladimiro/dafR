@@ -46,7 +46,8 @@ S3GetUnload <- function(filePrefix,
             query = paste(
                 'SELECT path FROM stl_unload_log',
                 'WHERE path LIKE',
-                paste0('\'', filePrefix, '%\'')
+                paste0('\'', filePrefix, '%\''),
+                'AND line_count > 0'
             ),
             id = dbID,
             yamlFile = yamlConfig,
@@ -67,52 +68,19 @@ S3GetUnload <- function(filePrefix,
     
     
     # Read objects from S3
-    nOfFiles <- length(s3FileList)
-    
-    Say("Copying files from s3")
-    
-    # Read all objects from s3 by using path on file list
-    if (parallel) {
+    # number of objects to read and total files
+    nOfObjs <- length(s3FileList)
+
+    # Read objects as data.frame
+    Say("Reading files from s3 as data.table:")
+    if (nOfObjs == 0) {
+        
+        s3DataFrames <- data.table::data.table()
+        
+    } else if (parallel) {
         
         # detect number of cores
         numCores <- parallel::detectCores()
-        
-        # make a cluster equal to the number of cores
-        clusterForPar <- parallel::makeCluster(numCores)
-        
-        s3Objects <- parallel::parLapply(clusterForPar,
-            seq_len(nOfFiles),
-            fun = function(i) {
-                Windmill("Copying file", i, "of", nOfFiles)
-                aws.s3::get_object(s3FileList[i], accelerate = acceleration)
-            }
-        )
-        
-        # stop the cluster
-        parallel::stopCluster(clusterForPar)
-        
-    } else {
-        
-        s3Objects <- lapply(
-            seq_len(nOfFiles),
-            FUN = function(i) {
-                Windmill("Copying file", i, "of", nOfFiles)
-                aws.s3::get_object(s3FileList[i], accelerate = acceleration)
-            }
-        )
-        
-    }
-    
-    
-    # Exlude all objects with 0 bites, i.e, length 0
-    s3Objects <- s3Objects[sapply(s3Objects, FUN = function(x) length(x) > 0)]
-    
-    nOfObjs <- length(s3Objects)
-    
-    
-    # Read objects as data.frame
-    Say("Reading files as data.table:")
-    if (parallel) {
         
         # make a cluster equal to the number of cores
         clusterForPar <- parallel::makeCluster(numCores)
@@ -122,9 +90,11 @@ S3GetUnload <- function(filePrefix,
             seq_len(nOfObjs),
             fun = function(n) {
                 Windmill("Reading", n, "of", nOfObjs)
-                iotools::read.delim.raw(
-                    rawConnection(s3Objects[[n]]),
-                    sep = ';', header = FALSE
+                aws.s3::s3read_using(
+                    object = s3FileList[[n]], 
+                    FUN = data.table::fread,
+                    header = FALSE,
+                    opts = list(accelerate = acceleration)
                 )
             }
         ))
@@ -138,9 +108,11 @@ S3GetUnload <- function(filePrefix,
             seq_len(nOfObjs),
             FUN = function(n) {
                 Windmill("Reading", n, "of", nOfObjs)
-                iotools::read.delim.raw(
-                    rawConnection(s3Objects[[n]]),
-                    sep = ';', header = FALSE
+                aws.s3::s3read_using(
+                    object = s3FileList[[n]], 
+                    FUN = data.table::fread,
+                    header = FALSE,
+                    opts = list(accelerate = acceleration)
                 )
             }
         ))
@@ -163,39 +135,6 @@ S3GetUnload <- function(filePrefix,
             dt[[column]] <- as.integer(dt[[column]])
         }
     }
-    
-    
-    # Finally delete files from s3
-    Say("Removing files from s3")
-    if (parallel) {
-        
-        # make a cluster equal to the number of cores
-        clusterForPar <- parallel::makeCluster(numCores)
-        
-        delRes <- parallel::parSapply(
-            clusterForPar,
-            seq_len(nOfFiles),
-            FUN = function(i) {
-                Windmill("Deleting file", i, "of", nOfFiles)
-                aws.s3::delete_object(s3FileList[i], accelerate = acceleration)
-            }
-        )
-        
-        # Stop the cluster
-        parallel::stopCluster(clusterForPar)
-        
-    } else {
-        
-        delRes <- sapply(
-            seq_len(nOfFiles),
-            FUN = function(i) {
-                Windmill("Deleting file", i, "of", nOfFiles)
-                aws.s3::delete_object(s3FileList[i], accelerate = acceleration)
-            }
-        )
-        
-    }
-    
     
     return(dt)
     

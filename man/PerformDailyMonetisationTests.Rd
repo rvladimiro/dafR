@@ -3,11 +3,6 @@
 \name{PerformDailyMonetisationTests}
 \alias{PerformDailyMonetisationTests}
 \title{Compares treatment to control on ARPDAU, ARPPU and Conversion Rate}
-\usage{
-PerformDailyMonetisationTests(dataset, kpi, revenueColumn = "revenue",
-  groupColumn = "abGroup", controlName = "Control", bootIterations = 999,
-  bootConfLevel = 95, parallelBoot = TRUE, ...)
-}
 \arguments{
 \item{dataset}{The dataset containing one observation per row}
 

@@ -14,6 +14,9 @@ GetS3Config(id, yamlFile)
 \value{
 A list of configuration parameters
 }
+\description{
+Get S3 server configuration from a given a yaml configuration file
+}
 \author{
 Ricardo Vladimiro
 }

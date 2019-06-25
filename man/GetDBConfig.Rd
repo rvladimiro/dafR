@@ -14,6 +14,9 @@ GetDBConfig(id, yamlFile)
 \value{
 A list of configuration parameters
 }
+\description{
+Get database server configuration from a given a yaml configuration file
+}
 \author{
 Ricardo Vladimiro
 }

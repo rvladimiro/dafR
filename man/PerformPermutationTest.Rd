@@ -3,10 +3,6 @@
 \name{PerformPermutationTest}
 \alias{PerformPermutationTest}
 \title{Performs a permutation test}
-\usage{
-PerformPermutationTest(dataset, testGroups, controlGroup = "Control",
-  responseColumn = "response", groupColumn = "abGroup", ...)
-}
 \arguments{
 \item{dataset}{The dataset containing one observation per row}
 

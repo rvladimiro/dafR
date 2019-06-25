@@ -3,11 +3,6 @@
 \name{GetBootstrappedCI}
 \alias{GetBootstrappedCI}
 \title{Constructs Confidence Interval for difference in means}
-\usage{
-GetBootstrappedCI(dataset, testGroups, controlGroup = "Control",
-  responseColumn = "response", groupColumn = "abGroup",
-  bootIterations = 999, bootConfLevel = 95, parallel = TRUE)
-}
 \arguments{
 \item{dataset}{The dataset containing one observation per row}
 

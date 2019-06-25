@@ -6,6 +6,9 @@
 \usage{
 CheckDataDirectory()
 }
+\description{
+Checks if the data directory exists in the working directory and throws an error if it doesn't.
+}
 \author{
 Ricardo Vladimiro
 }

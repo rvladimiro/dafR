@@ -3,10 +3,6 @@
 \name{InsertRedshiftTableByQuery}
 \alias{InsertRedshiftTableByQuery}
 \title{Creates a table with the results of a given SQL query}
-\usage{
-InsertRedshiftTableByQuery(query, tableName, schema = "development",
-  keyColumn, clean = TRUE, id, yamlFile = "~/db.yml")
-}
 \arguments{
 \item{query}{Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query.}
 

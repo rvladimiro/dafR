@@ -3,10 +3,6 @@
 \name{RedshiftQuery}
 \alias{RedshiftQuery}
 \title{Query data from a Redshift database}
-\usage{
-RedshiftQuery(query, dbID, s3ID, yamlConfig = "~/db.yml",
-  acceleration = TRUE, parallel = TRUE)
-}
 \arguments{
 \item{query}{Character vector with length 1. Can be either a SQL query or a path to a text file containing a SQL query}
 

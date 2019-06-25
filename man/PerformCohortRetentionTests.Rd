@@ -3,11 +3,6 @@
 \name{PerformCohortRetentionTests}
 \alias{PerformCohortRetentionTests}
 \title{Compares treatment to control on retention rate for given retention day}
-\usage{
-PerformCohortRetentionTests(dataset, retentionDays, controlName = "Control",
-  groupColumn = "abGroup", retentionDaysColumn = "retentionDay",
-  usersColumn = "users", acquisitionColumn = "cohort", ...)
-}
 \arguments{
 \item{dataset}{The summarised dataset}
 

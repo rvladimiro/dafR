@@ -14,6 +14,9 @@ GetYAMLConfig(id, yamlFile)
 \value{
 A list of configuration parameters
 }
+\description{
+Get a configuration from a yaml configuration file
+}
 \author{
 Ricardo Vladimiro
 }

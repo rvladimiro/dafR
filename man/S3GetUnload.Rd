@@ -3,10 +3,6 @@
 \name{S3GetUnload}
 \alias{S3GetUnload}
 \title{Read s3 files generated from Unload SQL command}
-\usage{
-S3GetUnload(filePrefix, dbID, s3ID, yamlConfig = "~/db.yml",
-  acceleration = TRUE, parallel = TRUE)
-}
 \arguments{
 \item{filePrefix}{Either a character vector with length 1, with the prefix shared by the objects to be read, or a character vector listing the full path of each obejct to be read}
 

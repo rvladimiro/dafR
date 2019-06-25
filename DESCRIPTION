@@ -1,7 +1,7 @@
 Package: dafR
 Type: Package
 Title: Data Analysis Framework in R
-Version: 0.1.0
+Version: 0.1.1
 Author: Ricardo Vladimiro, Henrique Cabral, João Monteiro
 Maintainer: Ricardo Vladimiro <r.vladimiro@gmail.com>
 Description: Collection of tools for data analysis. Includes functions to manage
@@ -9,5 +9,12 @@ Description: Collection of tools for data analysis. Includes functions to manage
 License: MIT + file LICENSE
 Imports: data.table
 LazyData: TRUE
-RoxygenNote: 6.0.1
-Suggests:
+RoxygenNote: 6.1.1
+Suggests: Hmisc, 
+    RMySQL,
+    RPostgreSQL,
+    aws.s3,
+    lubridate,
+    perm,
+    readr,
+    yaml
